@@ -1,6 +1,7 @@
 package ed448
 
 import (
+	"crypto/rand"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -25,7 +26,7 @@ var testValue = [fieldBytes]byte{
 
 func (s *Ed448Suite) Test_GenerateKeysProducesKeyPair(c *C) {
 	curve := NewCurve()
-	priv, pub, ok := curve.GenerateKeys()
+	priv, pub, ok := curve.GenerateKeys(rand.Reader)
 	c.Assert(ok, Equals, true)
 	c.Assert(priv, NotNil)
 	c.Assert(pub, NotNil)
@@ -33,7 +34,7 @@ func (s *Ed448Suite) Test_GenerateKeysProducesKeyPair(c *C) {
 
 func (s *Ed448Suite) Test_SignAndVerify(c *C) {
 	curve := NewCurve()
-	priv, pub, ok := curve.GenerateKeys()
+	priv, pub, ok := curve.GenerateKeys(rand.Reader)
 	c.Assert(ok, Equals, true)
 
 	message := []byte("sign here.")
@@ -50,8 +51,8 @@ func (s *Ed448Suite) Test_SignAndVerify(c *C) {
 
 func (s *Ed448Suite) Test_ComputeSecret(c *C) {
 	curve := NewCurve()
-	privA, pubA, _ := curve.GenerateKeys()
-	privB, pubB, _ := curve.GenerateKeys()
+	privA, pubA, _ := curve.GenerateKeys(rand.Reader)
+	privB, pubB, _ := curve.GenerateKeys(rand.Reader)
 	secretA := curve.ComputeSecret(privA, pubB)
 	secretB := curve.ComputeSecret(privB, pubA)
 	c.Assert(secretA, DeepEquals, secretB)

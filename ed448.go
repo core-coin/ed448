@@ -3,12 +3,13 @@ package ed448
 import (
 	"crypto/rand"
 	"crypto/sha512"
+	"io"
 )
 
 // Curve is the interface that wraps the basic curve methods.
 //TODO It would be better with the use of privateKey and publicKey types.
 type Curve interface {
-	GenerateKeys() (priv [privKeyBytes]byte, pub [pubKeyBytes]byte, ok bool)
+	GenerateKeys(read io.Reader) (priv [privKeyBytes]byte, pub [pubKeyBytes]byte, ok bool)
 	Sign(priv [privKeyBytes]byte, message []byte) (signature [signatureBytes]byte, ok bool)
 	Verify(signature [signatureBytes]byte, message []byte, pub [pubKeyBytes]byte) (valid bool)
 	ComputeSecret(private [privKeyBytes]byte, public [pubKeyBytes]byte) (secret [sha512.Size]byte)
@@ -26,9 +27,9 @@ func NewCurve() Curve {
 }
 
 // Generates a private key and its correspondent public key.
-func (ed *curveT) GenerateKeys() (priv [privKeyBytes]byte, pub [pubKeyBytes]byte, ok bool) {
+func (ed *curveT) GenerateKeys(read io.Reader) (priv [privKeyBytes]byte, pub [pubKeyBytes]byte, ok bool) {
 	var err error
-	privKey, err := ed.generateKey(rand.Reader)
+	privKey, err := ed.generateKey(read)
 	ok = err == nil
 
 	copy(priv[:], privKey[:])
