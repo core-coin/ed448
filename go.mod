@@ -1,4 +1,4 @@
-module github.com/otrv4/ed448
+module github.com/core-coin/ed448
 
 go 1.13
 
