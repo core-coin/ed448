@@ -300,7 +300,6 @@ func (s *Ed448Suite) Test_ScalarDecodeLong(c *C) {
 		0x4b75d258, 0x34a8bc39,
 	}
 
-	x = scalarZero
 	out = decodeLong(x, buf)
 
 	c.Assert(out, DeepEquals, exp)
@@ -322,7 +321,6 @@ func (s *Ed448Suite) Test_ScalarDecodeLong(c *C) {
 		0xac5eb1a1, 0x32a3e4eb,
 	}
 
-	x = scalarZero
 	out = decodeLong(x, buf)
 	c.Assert(out, DeepEquals, exp)
 }
