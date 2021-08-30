@@ -94,3 +94,19 @@ func Ed448GenerateKey(reader io.Reader) (PrivateKey, error) {
 	}
 	return *key, nil
 }
+
+func BytesToPublicKey(key []byte) (pk PublicKey) {
+	if len(key) != len(PublicKey{}) {
+		return PublicKey{}
+	}
+	copy(pk[:], key)
+	return
+}
+
+func BytesToPrivateKey(key []byte) (pk PrivateKey) {
+	if len(key) != len(PrivateKey{}) {
+		return PrivateKey{}
+	}
+	copy(pk[:], key)
+	return
+}
