@@ -1,6 +1,5 @@
 package ed448
 
-import "C"
 import (
 	"fmt"
 	"io"
