@@ -76,7 +76,7 @@ func Ed448Verify(pubkey PublicKey, signature, message, context []byte, prehashed
 	p := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
 
 	if !p.EdDSADecode(pubkey[:]) {
-		panic("Point is not on the curve!")
+		return false
 	}
 	var sig [114]byte
 	copy(sig[:], signature[:])
