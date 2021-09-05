@@ -63,12 +63,20 @@ var scalarFour = NewScalar([]byte{0x04})
 // DSAVerify implements EdDSA style verifying for Ed448
 // equivalent of goldilocks_ed48_verify
 func DSAVerify(sig [114]byte, pub Point, msg []byte) bool {
-	pub2 := PointScalarMul(pub, scalarFour)
+	// pub2 := PointScalarMul(pub, scalarFour)
+
+	pub2 := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
+	pub2.Add(pub, pub)
+	pub2.Add(pub2, pub2)
+
 	sig1 := append([]byte{}, sig[:57]...)
 	sig2 := append([]byte{}, sig[57:]...)
 	rPoint := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
 	rPoint.EdDSADecode(sig1)
-	rPoint = PointScalarMul(rPoint, scalarFour)
+
+	//rPoint = PointScalarMul(rPoint, scalarFour)
+	rPoint.Add(rPoint, rPoint)
+	rPoint.Add(rPoint, rPoint)
 
 	challenge := make([]byte, 114)
 	hashWithDom(challenge, append(append(sig1, pub.EdDSAEncode()...), msg...))
