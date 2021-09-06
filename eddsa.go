@@ -71,12 +71,10 @@ func DSAVerify(sig [114]byte, pub Point, msg []byte) bool {
 
 	sig1 := append([]byte{}, sig[:57]...)
 	sig2 := append([]byte{}, sig[57:]...)
-	rPoint := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-	rPoint.EdDSADecode(sig1)
 
-	//rPoint = PointScalarMul(rPoint, scalarFour)
-	rPoint.Add(rPoint, rPoint)
-	rPoint.Add(rPoint, rPoint)
+	// CHANGED! Eliminated multiplying and divining on scalarFour
+	rPoint := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
+	rPoint.EdDSADecodeWithoutCofactor(sig1)
 
 	challenge := make([]byte, 114)
 	hashWithDom(challenge, append(append(sig1, pub.EdDSAEncode()...), msg...))
