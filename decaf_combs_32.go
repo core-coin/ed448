@@ -24,13 +24,58 @@ func (table *decafBaseTable) lookup(index word) *twNiels {
 		&bigNumber{},
 	}
 
-	for i := 0; i < tableSize; i++ {
+	part := index & 0xfffffff0
+	for i := part; i < part + 16; i++ {
 		m := selectMask(index, word(i))
-		for j := 0; j < nLimbs; j++ {
-			out.a[j] |= m & table.base[i].a[j]
-			out.b[j] |= m & table.base[i].b[j]
-			out.c[j] |= m & table.base[i].c[j]
-		}
+		out.a[0] |= m & table.base[i].a[0]
+		out.b[0] |= m & table.base[i].b[0]
+		out.c[0] |= m & table.base[i].c[0]
+		out.a[1] |= m & table.base[i].a[1]
+		out.b[1] |= m & table.base[i].b[1]
+		out.c[1] |= m & table.base[i].c[1]
+		out.a[2] |= m & table.base[i].a[2]
+		out.b[2] |= m & table.base[i].b[2]
+		out.c[2] |= m & table.base[i].c[2]
+		out.a[3] |= m & table.base[i].a[3]
+		out.b[3] |= m & table.base[i].b[3]
+		out.c[3] |= m & table.base[i].c[3]
+		out.a[4] |= m & table.base[i].a[4]
+		out.b[4] |= m & table.base[i].b[4]
+		out.c[4] |= m & table.base[i].c[4]
+		out.a[5] |= m & table.base[i].a[5]
+		out.b[5] |= m & table.base[i].b[5]
+		out.c[5] |= m & table.base[i].c[5]
+		out.a[6] |= m & table.base[i].a[6]
+		out.b[6] |= m & table.base[i].b[6]
+		out.c[6] |= m & table.base[i].c[6]
+		out.a[7] |= m & table.base[i].a[7]
+		out.b[7] |= m & table.base[i].b[7]
+		out.c[7] |= m & table.base[i].c[7]
+		out.a[8] |= m & table.base[i].a[8]
+		out.b[8] |= m & table.base[i].b[8]
+		out.c[8] |= m & table.base[i].c[8]
+		out.a[9] |= m & table.base[i].a[9]
+		out.b[9] |= m & table.base[i].b[9]
+		out.c[9] |= m & table.base[i].c[9]
+		out.a[10] |= m & table.base[i].a[10]
+		out.b[10] |= m & table.base[i].b[10]
+		out.c[10] |= m & table.base[i].c[10]
+		out.a[11] |= m & table.base[i].a[11]
+		out.b[11] |= m & table.base[i].b[11]
+		out.c[11] |= m & table.base[i].c[11]
+		out.a[12] |= m & table.base[i].a[12]
+		out.b[12] |= m & table.base[i].b[12]
+		out.c[12] |= m & table.base[i].c[12]
+		out.a[13] |= m & table.base[i].a[13]
+		out.b[13] |= m & table.base[i].b[13]
+		out.c[13] |= m & table.base[i].c[13]
+		out.a[14] |= m & table.base[i].a[14]
+		out.b[14] |= m & table.base[i].b[14]
+		out.c[14] |= m & table.base[i].c[14]
+		out.a[15] |= m & table.base[i].a[15]
+		out.b[15] |= m & table.base[i].b[15]
+		out.c[15] |= m & table.base[i].c[15]
+
 	}
 	return out
 }
