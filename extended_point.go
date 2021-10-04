@@ -17,6 +17,7 @@ type Point interface {
 	Decode(src []byte, identity bool) (bool, error)
 	EdDSAEncode() []byte
 	EdDSADecode(src []byte) bool
+	EdDSADecodeWithoutCofactor(src []byte) bool
 }
 
 // Extended Homogenous Projective coordinates: (X : Y : T : Z), which
@@ -432,6 +433,63 @@ func edDSALikeDecode(p *twExtendedPoint, srcOrg []byte) word {
 	p.y = res.y
 	p.z = res.z
 	p.t = res.t
+
+	return succ
+}
+
+// The very same as previous, but without heavy dividing on scalarFour
+func edDSALikeDecodeWithoutCofactor(p *twExtendedPoint, srcOrg []byte) word {
+	if len(srcOrg) != dsaFieldBytes {
+		panic("Attempted to decode with a source that is not 57 bytes")
+	}
+	src := append([]byte{}, srcOrg...)
+
+	var cofactorMask uint = zeroMask
+
+	low := ^isZeroMask(word(src[fieldBytes] & zeroMask))
+	src[fieldBytes] &= byte(^(cofactorMask))
+
+	succ := isZeroMask(word(src[fieldBytes]))
+	succ &= dsaLikeDeserialize(p.y, src[:], uint(0))
+
+	p.x.square(p.y)
+	p.z.sub(bigOne, p.x)                       // num = 1- (y^2)
+	p.t.mulWSignedCurveConstant(p.x, edwardsD) // d * (y^2)
+	p.t.sub(bigOne, p.t)                       // denom = 1 - d * (y^2)
+	p.x.mul(p.z, p.t)
+	p.t.isr(p.x)      // 1/sqrt(num * denom) // implement it with check
+	p.x.mul(p.t, p.z) // sqrt(num / denom)
+	p.x.decafCondNegate(^lowBit(p.x) ^ low)
+	p.z = bigOne.copy()
+
+	// 4-isogeny 2xy/(y^2-ax^2), (y^2+ax^2)/(2-y^2-ax^2)
+	a, b, c, d := &bigNumber{}, &bigNumber{}, &bigNumber{}, &bigNumber{}
+	c.square(p.x)
+	a.square(p.y)
+	d.add(c, a)
+	p.t.add(p.y, p.x)
+	b.square(p.t)
+	b.sub(b, d)
+	p.t.sub(a, c)
+	p.x.square(p.z)
+	p.z.add(p.x, p.x)
+	a.sub(p.z, d)
+	p.x.mul(a, b)
+	p.z.mul(p.t, a)
+	p.y.mul(p.t, d)
+	p.t.mul(b, d)
+
+	// wipe out
+	a.set(bigZero)
+	b.set(bigZero)
+	c.set(bigZero)
+	d.set(bigZero)
+	src = make([]byte, 57)
+
+	ok := p.isOnCurve()
+	if !ok {
+		return decafFalse
+	}
 
 	return succ
 }
@@ -890,6 +948,12 @@ func (p *twExtendedPoint) EdDSAEncode() []byte {
 	out := make([]byte, dsaFieldBytes)
 	p.edDSALikeEncode(out)
 	return out
+}
+
+func (p *twExtendedPoint) EdDSADecodeWithoutCofactor(src []byte) bool {
+	ok := edDSALikeDecodeWithoutCofactor(p, src)
+
+	return ok == decafTrue
 }
 
 // EdDSADecode gives the decoding of a point (p) as a sequence of bytes (src).
