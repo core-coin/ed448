@@ -2,30 +2,43 @@ package ed448
 
 //c = a * b
 func karatsubaMul(c, a, b *bigNumber) *bigNumber {
-	var aa, bb [8]dword
-	for i := 0; i < 8; i++ {
-		aa[i] = dword(a[i]) + dword(a[i+8])
-		bb[i] = dword(b[i]) + dword(b[i+8])
-	}
+
+	var aa0 dword = dword(a[0]) + dword(a[8])
+	var aa1 dword = dword(a[1]) + dword(a[9])
+	var aa2 dword = dword(a[2]) + dword(a[10])
+	var aa3 dword = dword(a[3]) + dword(a[11])
+	var aa4 dword = dword(a[4]) + dword(a[12])
+	var aa5 dword = dword(a[5]) + dword(a[13])
+	var aa6 dword = dword(a[6]) + dword(a[14])
+	var aa7 dword = dword(a[7]) + dword(a[15])
+	var bb0 dword = dword(b[0]) + dword(b[8])
+	var bb1 dword = dword(b[1]) + dword(b[9])
+	var bb2 dword = dword(b[2]) + dword(b[10])
+	var bb3 dword = dword(b[3]) + dword(b[11])
+	var bb4 dword = dword(b[4]) + dword(b[12])
+	var bb5 dword = dword(b[5]) + dword(b[13])
+	var bb6 dword = dword(b[6]) + dword(b[14])
+	var bb7 dword = dword(b[7]) + dword(b[15])
+
 
 	var z0, z1, z2 dword
 
 	//j = 0
 	z2 = 0
 	z2 += dword(a[0]) * dword(b[0])
-	z1 += aa[0] * bb[0]
+	z1 += aa0 * bb0
 	z1 -= z2
 	z0 += dword(a[8]) * dword(b[8])
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[1]
-	z2 += aa[6] * bb[2]
-	z2 += aa[5] * bb[3]
-	z2 += aa[4] * bb[4]
-	z2 += aa[3] * bb[5]
-	z2 += aa[2] * bb[6]
-	z2 += aa[1] * bb[7]
+	z2 += aa7 * bb1
+	z2 += aa6 * bb2
+	z2 += aa5 * bb3
+	z2 += aa4 * bb4
+	z2 += aa3 * bb5
+	z2 += aa2 * bb6
+	z2 += aa1 * bb7
 
 	z1 += dword(a[15]) * dword(b[9])
 	z1 += dword(a[14]) * dword(b[10])
@@ -56,8 +69,8 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[0])
 	z2 += dword(a[0]) * dword(b[1])
 
-	z1 += aa[1] * bb[0]
-	z1 += aa[0] * bb[1]
+	z1 += aa1 * bb0
+	z1 += aa0 * bb1
 	z1 -= z2
 
 	z0 += dword(a[9]) * dword(b[8])
@@ -66,12 +79,12 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 
 	z2 = 0
 
-	z2 += aa[7] * bb[2]
-	z2 += aa[6] * bb[3]
-	z2 += aa[5] * bb[4]
-	z2 += aa[4] * bb[5]
-	z2 += aa[3] * bb[6]
-	z2 += aa[2] * bb[7]
+	z2 += aa7 * bb2
+	z2 += aa6 * bb3
+	z2 += aa5 * bb4
+	z2 += aa4 * bb5
+	z2 += aa3 * bb6
+	z2 += aa2 * bb7
 
 	z1 += dword(a[15]) * dword(b[10])
 	z1 += dword(a[14]) * dword(b[11])
@@ -101,9 +114,9 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[1])
 	z2 += dword(a[0]) * dword(b[2])
 
-	z1 += aa[2] * bb[0]
-	z1 += aa[1] * bb[1]
-	z1 += aa[0] * bb[2]
+	z1 += aa2 * bb0
+	z1 += aa1 * bb1
+	z1 += aa0 * bb2
 	z1 -= z2
 
 	z0 += dword(a[10]) * dword(b[8])
@@ -112,11 +125,11 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[3]
-	z2 += aa[6] * bb[4]
-	z2 += aa[5] * bb[5]
-	z2 += aa[4] * bb[6]
-	z2 += aa[3] * bb[7]
+	z2 += aa7 * bb3
+	z2 += aa6 * bb4
+	z2 += aa5 * bb5
+	z2 += aa4 * bb6
+	z2 += aa3 * bb7
 
 	z1 += dword(a[15]) * dword(b[11])
 	z1 += dword(a[14]) * dword(b[12])
@@ -145,10 +158,10 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[2])
 	z2 += dword(a[0]) * dword(b[3])
 
-	z1 += aa[3] * bb[0]
-	z1 += aa[2] * bb[1]
-	z1 += aa[1] * bb[2]
-	z1 += aa[0] * bb[3]
+	z1 += aa3 * bb0
+	z1 += aa2 * bb1
+	z1 += aa1 * bb2
+	z1 += aa0 * bb3
 	z1 -= z2
 
 	z0 += dword(a[11]) * dword(b[8])
@@ -158,10 +171,10 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[4]
-	z2 += aa[6] * bb[5]
-	z2 += aa[5] * bb[6]
-	z2 += aa[4] * bb[7]
+	z2 += aa7 * bb4
+	z2 += aa6 * bb5
+	z2 += aa5 * bb6
+	z2 += aa4 * bb7
 
 	z0 -= dword(a[7]) * dword(b[4])
 	z0 -= dword(a[6]) * dword(b[5])
@@ -189,11 +202,11 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[3])
 	z2 += dword(a[0]) * dword(b[4])
 
-	z1 += aa[4] * bb[0]
-	z1 += aa[3] * bb[1]
-	z1 += aa[2] * bb[2]
-	z1 += aa[1] * bb[3]
-	z1 += aa[0] * bb[4]
+	z1 += aa4 * bb0
+	z1 += aa3 * bb1
+	z1 += aa2 * bb2
+	z1 += aa1 * bb3
+	z1 += aa0 * bb4
 	z1 -= z2
 
 	z0 += dword(a[12]) * dword(b[8])
@@ -204,9 +217,9 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[5]
-	z2 += aa[6] * bb[6]
-	z2 += aa[5] * bb[7]
+	z2 += aa7 * bb5
+	z2 += aa6 * bb6
+	z2 += aa5 * bb7
 
 	z1 += dword(a[15]) * dword(b[13])
 	z1 += dword(a[14]) * dword(b[14])
@@ -233,12 +246,12 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[4])
 	z2 += dword(a[0]) * dword(b[5])
 
-	z1 += aa[5] * bb[0]
-	z1 += aa[4] * bb[1]
-	z1 += aa[3] * bb[2]
-	z1 += aa[2] * bb[3]
-	z1 += aa[1] * bb[4]
-	z1 += aa[0] * bb[5]
+	z1 += aa5 * bb0
+	z1 += aa4 * bb1
+	z1 += aa3 * bb2
+	z1 += aa2 * bb3
+	z1 += aa1 * bb4
+	z1 += aa0 * bb5
 	z1 -= z2
 
 	z0 += dword(a[13]) * dword(b[8])
@@ -250,8 +263,8 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[6]
-	z2 += aa[6] * bb[7]
+	z2 += aa7 * bb6
+	z2 += aa6 * bb7
 
 	z1 += dword(a[15]) * dword(b[14])
 	z1 += dword(a[14]) * dword(b[15])
@@ -277,13 +290,13 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[5])
 	z2 += dword(a[0]) * dword(b[6])
 
-	z1 += aa[6] * bb[0]
-	z1 += aa[5] * bb[1]
-	z1 += aa[4] * bb[2]
-	z1 += aa[3] * bb[3]
-	z1 += aa[2] * bb[4]
-	z1 += aa[1] * bb[5]
-	z1 += aa[0] * bb[6]
+	z1 += aa6 * bb0
+	z1 += aa5 * bb1
+	z1 += aa4 * bb2
+	z1 += aa3 * bb3
+	z1 += aa2 * bb4
+	z1 += aa1 * bb5
+	z1 += aa0 * bb6
 	z1 -= z2
 
 	z0 += dword(a[14]) * dword(b[8])
@@ -296,7 +309,7 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z0 += z2
 
 	z2 = 0
-	z2 += aa[7] * bb[7]
+	z2 += aa7 * bb7
 	z1 += dword(a[15]) * dword(b[15])
 	z1 += z2
 	z0 -= dword(a[7]) * dword(b[7])
@@ -319,14 +332,14 @@ func karatsubaMul(c, a, b *bigNumber) *bigNumber {
 	z2 += dword(a[1]) * dword(b[6])
 	z2 += dword(a[0]) * dword(b[7])
 
-	z1 += aa[7] * bb[0]
-	z1 += aa[6] * bb[1]
-	z1 += aa[5] * bb[2]
-	z1 += aa[4] * bb[3]
-	z1 += aa[3] * bb[4]
-	z1 += aa[2] * bb[5]
-	z1 += aa[1] * bb[6]
-	z1 += aa[0] * bb[7]
+	z1 += aa7 * bb0
+	z1 += aa6 * bb1
+	z1 += aa5 * bb2
+	z1 += aa4 * bb3
+	z1 += aa3 * bb4
+	z1 += aa2 * bb5
+	z1 += aa1 * bb6
+	z1 += aa0 * bb7
 	z1 -= z2
 
 	z0 += dword(a[15]) * dword(b[8])
