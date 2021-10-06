@@ -12,6 +12,11 @@ type fixedBaseTable struct {
 	adjustments adjustmentsTable
 }
 
+func selectMask(index word, current word) word {
+	xor := index ^ current
+	return word(-(((xor | -xor) >> 31) ^ 1))
+}
+
 // This is constant time
 func (table *fixedBaseTable) lookup(j, t, idx uint) *twNiels {
 	index := word((j << (t - 1)) + idx)

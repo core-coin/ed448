@@ -24,7 +24,7 @@ func (s *Ed448Suite) Test_DecafLookup(c *C) {
 		0x0ca3ffdc, 0x0bd7f65a, 0x050288a8, 0x0dea434a,
 	}
 
-	point := decafPrecompTable.lookup(word(0x09))
+	point := decafPrecompTable64.lookup64(word(0x09))
 
 	c.Assert(point.a, DeepEquals, expA)
 	c.Assert(point.b, DeepEquals, expB)
@@ -33,9 +33,11 @@ func (s *Ed448Suite) Test_DecafLookup(c *C) {
 }
 
 func (s *Ed448Suite) Test_SelectMask(c *C) {
-	m := selectMask(1, 1)
-	c.Assert(m, Equals, allOnes)
+	var t dword = 0xffffffffffffffff
+	m := selectMask64(1, 1)
+	c.Assert(m, Equals, t)
 
-	m = selectMask(1, 0)
-	c.Assert(m, Equals, allZeros)
+	t = 0
+	m = selectMask64(1, 0)
+	c.Assert(m, Equals, t)
 }

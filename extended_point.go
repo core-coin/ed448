@@ -628,7 +628,7 @@ func pointScalarMul(p *twExtendedPoint, s *scalar) *twExtendedPoint {
 	out := &twExtendedPoint{}
 
 	scalar1x := &scalar{}
-	scalar1x.add(s, decafPrecompTable.scalarAdjustment)
+	scalar1x.add(s, decafPrecompTable64.scalarAdjustment)
 	scalar1x.halve(scalar1x)
 
 	multiples := p.prepareFixedWindow(nTable)
@@ -672,7 +672,7 @@ func precomputedScalarMul(s *scalar) *twExtendedPoint {
 		new(bigNumber),
 	}
 	scalar2 := &scalar{}
-	scalar2.add(s, decafPrecompTable.scalarAdjustment)
+	scalar2.add(s, decafPrecompTable64.scalarAdjustment)
 	scalar2.halve(scalar2)
 
 	var np *twNiels
@@ -695,7 +695,7 @@ func precomputedScalarMul(s *scalar) *twExtendedPoint {
 			tab &= (1 << (decafCombTeeth - 1)) - 1
 
 			index := word(((j << (decafCombTeeth - 1)) + uint(tab)))
-			np = decafPrecompTable.lookup(index)
+			np = decafPrecompTable64.lookup64(index)
 
 			np.conditionalNegate(word(invert))
 
