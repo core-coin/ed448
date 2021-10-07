@@ -24,6 +24,23 @@ func PointByPrivate(p PrivateKey) Point {
 	return h
 }
 
+func PointBySecret(p PrivateKey) Point {
+
+	digest := [57]byte{}
+	copy(digest[:], p[:])
+	clamp(digest[:])
+
+	r := NewScalar(digest[:])
+	r.Halve(r)
+	r.Halve(r)
+	h := PrecomputedScalarMul(r)
+
+	Zero := PrivateKey{0}
+	copy(digest[:], Zero[:])
+
+	return h
+}
+
 // SLICES TO KEYS
 
 func BytesToPublicKey(key []byte) (pk PublicKey) {
@@ -117,32 +134,18 @@ func Ed448DerivePublicKey(privkey PrivateKey) PublicKey {
 
 // CREATE SIGNATURE
 
-func SignWithPrivate(privkey PrivateKey, pubkey PublicKey, message, context []byte, prehashed bool) [114]byte {
-	if len(context) != 0 {
-		panic("Context is not supported!")
-	}
-	if prehashed {
-		panic("Prehashing is not supported!")
-	}
-	p := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
+func SignWithPrivate(privkey PrivateKey, message  []byte) [114]byte {
 
-	if !p.EdDSADecode(pubkey[:]) {
-		panic("Point is not on the curve!")
-	}
-	return DSASign(privkey, p, message)
+	return DSASign(privkey, PointByPrivate(privkey), message)
 }
 
-func SignSecretAndNonce(secret, n PrivateKey, pubkey PublicKey, msg []byte) [114]byte {
+func SignSecretAndNonce(secret, n PrivateKey, msg []byte) [114]byte {
 
 	var s1 PrivateKey
 	copy(s1[:], secret[:])
 	clamp(s1[:])
 
-	pub := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-
-	if !pub.EdDSADecode(pubkey[:]) {
-		panic("Point is not on the curve!")
-	}
+	pub := PointBySecret(secret)
 
 	sec := NewScalar(s1[:])
 	seed := n[:]
@@ -173,22 +176,16 @@ func SignSecretAndNonce(secret, n PrivateKey, pubkey PublicKey, msg []byte) [114
 }
 
 
-func Ed448Sign(privkey PrivateKey, pubkey PublicKey, message, context []byte, prehashed bool) [114]byte {
+func Ed448Sign(privkey PrivateKey, message []byte) [114]byte {
 
 	if privkey[57-1]&0x80 == 0x00 {
-		return SignWithPrivate(privkey, pubkey, message, context, prehashed)
+		return SignWithPrivate(privkey, message)
 	} else {
-		if len(context) != 0 {
-			panic("Context is not supported!")
-		}
-		if prehashed {
-			panic("Prehashing is not supported!")
-		}
 		var sk PrivateKey
 		copy(sk[:], privkey[:])
 		clamp(sk[:])
 		
-		sig := SignSecretAndNonce(sk, sk, pubkey, message)
+		sig := SignSecretAndNonce(sk, sk, message)
 
 		// Erasing temporary values of private keys
 		var sZero = PrivateKey{0}
@@ -200,13 +197,8 @@ func Ed448Sign(privkey PrivateKey, pubkey PublicKey, message, context []byte, pr
 
 // VERIFY SIGNATURE
 
-func Ed448Verify(pubkey PublicKey, signature, message, context []byte, prehashed bool) bool {
-	if len(context) != 0 {
-		panic("Context is not supported!")
-	}
-	if prehashed {
-		panic("Prehashing is not supported!")
-	}
+func Ed448Verify(pubkey PublicKey, signature, message []byte) bool {
+
 	p := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
 
 	if !p.EdDSADecode(pubkey[:]) {

@@ -167,8 +167,7 @@ func TestSignWithPrivate(t *testing.T) {
 
 
 	fox := []byte("The quick brown fox jumps over the lazy dog")
-	pub := PrivateToPublic(priv)
-	sig2 := SignWithPrivate(priv, pub, fox, []byte{}, false)
+	sig2 := SignWithPrivate(priv, fox)
 	
 	if bytes.Compare(sig1[:], sig2[:]) != 0 {
 		t.Errorf("Signature must be %x, but it is %x", sig1, sig2)
@@ -192,8 +191,7 @@ func TestSignSecretAndNonce(t *testing.T) {
 
 
 	fox := []byte("The quick brown fox jumps over the lazy dog")
-	pub := SecretToPublic(secret)
-	sig2 := SignSecretAndNonce(secret, nonce, pub, fox)
+	sig2 := SignSecretAndNonce(secret, nonce, fox)
 	
 	if bytes.Compare(sig1[:], sig2[:]) != 0 {
 		t.Errorf("Signature must be %x, but it is %x", sig1, sig2)
@@ -213,8 +211,7 @@ func TestEd448Sign(t *testing.T) {
 	copy(sig1[:], s[:])
 
 	fox := []byte("The quick brown fox jumps over the lazy dog")
-	pub := Ed448DerivePublicKey(priv)
-	sig2 := Ed448Sign(priv, pub, fox, []byte{}, false)
+	sig2 := Ed448Sign(priv, fox)
 	
 	if bytes.Compare(sig1[:], sig2[:]) != 0 {
 		t.Errorf("Signature must be %x, but it is %x", sig1, sig2)
@@ -225,8 +222,7 @@ func TestEd448Sign(t *testing.T) {
 	s, _ = hex.DecodeString("789dd9e1a4471c30cfef1da68076542e6918676424593936dbeb282f5929dcfa3437aef85fd890999ea7a1b16a2c8c3a8cf330c58768789b006b183034ec43acab783039d53fe46f6c39ab29f988a43371d07fe7746a2fd45c660f2a8c441446b8f1cdbfc0787e4cfe69280e5cd7b92d0400")
 	copy(sig1[:], s[:])
 
-	pub = Ed448DerivePublicKey(priv)
-	sig2 = Ed448Sign(priv, pub, fox, []byte{}, false)
+	sig2 = Ed448Sign(priv, fox)
 	
 	if bytes.Compare(sig1[:], sig2[:]) != 0 {
 		t.Errorf("Signature must be %x, but it is %x", sig1, sig2)
@@ -242,15 +238,15 @@ func TestSignVerify(t *testing.T) {
 	copy(priv[:], p[:])
 
 	pub := Ed448DerivePublicKey(priv)
-	sig := Ed448Sign(priv, pub, []byte{1}, []byte{}, false)
-	if Ed448Verify(pub, sig[:], []byte{2}, []byte{}, false) {
+	sig := Ed448Sign(priv, []byte{1})
+	if Ed448Verify(pub, sig[:], []byte{2}) {
 		t.Errorf("wrong signature verification")
 	}
 
 
 	pub = Ed448DerivePublicKey(priv)
-	sig = Ed448Sign(priv, pub, []byte{1}, []byte{}, false)
-	if !Ed448Verify(pub, sig[:], []byte{1}, []byte{}, false) {
+	sig = Ed448Sign(priv, []byte{1})
+	if !Ed448Verify(pub, sig[:], []byte{1}) {
 		t.Errorf("Signature must be valid")
 	}
 
