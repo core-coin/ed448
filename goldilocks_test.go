@@ -252,25 +252,3 @@ func TestSignVerify(t *testing.T) {
 
 
 }
-
-func TestAddTwoPublic(t *testing.T) {
-
-	p, _ := hex.DecodeString("5475efbfc0fa155f3fd80a8c183260eef996532fd084899e32df9cb8db9eb34410d2ea0d4f8b273fbd79c3276b50b70fea40732ad88f45de00")
-	var pub1 PublicKey
-	copy(pub1[:], p[:])
-
-
-	p, _ = hex.DecodeString("d666091b1b3836d082d349e66521878cf7afc734329d5d132d8ebd06bebf6514aaad5794dbafed3fd6aa1c5d59d5db914e8460041ff3db6280")
-	var pub2 PublicKey
-	copy(pub2[:], p[:])
-
-	p, _ = hex.DecodeString("6af04e1137833cbf82878fcdcd8310851fe582320690990a7497de63389311588d4c0d4d6fce79d07958824e54ef11fabd23b815c81e79ea80")
-	var pub PublicKey
-	copy(pub[:], p[:])
-
-	generatedKey := AddTwoPublic(pub1, pub2)
-	
-	if bytes.Compare(pub[:], generatedKey[:]) != 0 {
-		t.Errorf("Public key must be %x, but it is %x", generatedKey, pub)
-	}
-}

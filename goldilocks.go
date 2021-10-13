@@ -94,6 +94,7 @@ func PrivateToSecret(pk PrivateKey) PrivateKey {
 
 	var sk PrivateKey
 	sha3.ShakeSum256(sk[:], pk[:])
+	sk[56] |= 0x80
 	return sk
 }
 
@@ -131,10 +132,9 @@ func Ed448DerivePublicKey(privkey PrivateKey) PublicKey {
 	}
 }
 
-
 // CREATE SIGNATURE
 
-func SignWithPrivate(privkey PrivateKey, message  []byte) [114]byte {
+func SignWithPrivate(privkey PrivateKey, message []byte) [114]byte {
 
 	return DSASign(privkey, PointByPrivate(privkey), message)
 }
@@ -175,7 +175,6 @@ func SignSecretAndNonce(secret, n PrivateKey, msg []byte) [114]byte {
 	return sig
 }
 
-
 func Ed448Sign(privkey PrivateKey, message []byte) [114]byte {
 
 	if privkey[57-1]&0x80 == 0x00 {
@@ -184,13 +183,13 @@ func Ed448Sign(privkey PrivateKey, message []byte) [114]byte {
 		var sk PrivateKey
 		copy(sk[:], privkey[:])
 		clamp(sk[:])
-		
+
 		sig := SignSecretAndNonce(sk, sk, message)
 
 		// Erasing temporary values of private keys
 		var sZero = PrivateKey{0}
 		copy(sk[:], sZero[:])
-		
+
 		return sig
 	}
 }
@@ -209,31 +208,6 @@ func Ed448Verify(pubkey PublicKey, signature, message []byte) bool {
 
 	return DSAVerify(sig, p, message)
 }
-
-// ADD TWO PUBLIC KEYS (FOR HDwallet)
-
-func AddTwoPublic(pub1 PublicKey, pub2 PublicKey) PublicKey {
-
-	var pub PublicKey
-	p := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-	p1 := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-	p2 := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-
-	if !p1.EdDSADecode(pub1[:]) {
-		panic("Point is not on the curve!")
-	}
-	if !p2.EdDSADecode(pub2[:]) {
-		panic("Point is not on the curve!")
-	}
-	p.Add(p1, p2)
-
-	r := p.EdDSAEncode()
-
-	copy(pub[:], r[:])
-
-	return pub
-}
-
 
 // GENERATE PRIVATE KEY
 
