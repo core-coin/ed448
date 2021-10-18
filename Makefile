@@ -75,3 +75,13 @@ ci-lint:
 
 race:
 	go test -race -short $(go list ./... | grep -v /vendor/)
+
+android:
+	@go get -d golang.org/x/mobile/cmd/gomobile
+	@gomobile init
+	@gomobile bind -v -o ed448.aar -target=android ./mobile
+
+ios:
+	@go get -d golang.org/x/mobile/cmd/gomobile
+	@gomobile init
+	@gomobile bind -v -o ed448.xcframework -target=ios ./mobile
