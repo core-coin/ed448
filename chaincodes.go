@@ -118,9 +118,18 @@ func clampTemplate(t []uint8) {
 	t[0] &= 0xfc
 }
 
-func SeedToExtendedPrivate(s [114]uint8) ExtendedPrivate {
+func SeedToExtendedPrivate(s []uint8) ExtendedPrivate {
 	var p ExtendedPrivate
-	copy(p[:], s[:])
+
+	if len(s) != 64 {
+		panic("Seed must be 64 bytes")
+	}
+
+	t := SHA512Hash(s, []uint8("mnemonicforthechain"))
+	copy (p[:57], t)
+	t = SHA512Hash(s, []uint8("mnemonicforthekey"))
+	copy (p[57:], t)
+
 	p[113] |= 0x80 // Set key type identifier
 	p[112] |= 0x80 // EdDSA standard
 	p[112] &= 0xbf // Set to keep previous =1 during generation new accounts
@@ -220,13 +229,13 @@ func ChildPublicToPublic(pub ExtendedPublic, index uint32) ExtendedPublic {
 
 
 
-func GenerateSeed(reader io.Reader) ([114]uint8, error) {
-	seed := new([114]uint8)
+func GenerateSeed(reader io.Reader) ([]uint8, error) {
+	seed := new([64]uint8)
 	n, err := io.ReadFull(reader, seed[:])
 	if err != nil {
-		return [114]uint8{}, err
-	} else if n != 114 {
-		return [114]uint8{}, fmt.Errorf("not 114 random bytes")
+		return seed[:], err
+	} else if n != 64 {
+		return seed[:], fmt.Errorf("not 64 random bytes")
 	}
-	return *seed, nil 
+	return seed[:], nil 
 }

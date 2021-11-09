@@ -9,14 +9,14 @@ import (
 
 func TestSeedToExtendedPrivate(t *testing.T) {
 
-	p1, _ := hex.DecodeString("004e843c2991930124e5a0711c6a8be763f5b605ee80f089dfa9cbec5ebb20123dcc787b162a7baf37b0251f6bdd4ac14ae111491ef391cf0d22769f20360cd7840e55ab1f282f066cc94c1e2c08e4235f68b170cfc92f6b6a546bb7da1de112c0e730ce5456bd76df620b571bfbfc95467f")
-	var seed [114]uint8
+	p1, _ := hex.DecodeString("6bc0169565eecbc8e62259959534a67684adbd4c229cc8830405fe81f60c7b896a273421c9587f4b3321ab8353bf7178b8f383ce07f916de7abebabfef0f5fee")
+	var seed [64]uint8
 	copy(seed[:], p1[:])
 
 
-	p2, _ := hex.DecodeString("004e843c2991930124e5a0711c6a8be763f5b605ee80f089dfa9cbec5ebb20123dcc787b162a7baf37b0251f6bdd4ac14ae111491ef391cf0d22769f20360cd7840e55ab1f282f066cc94c1e2c08e4235f68b170cfc92f6b6a546bb7da1de112c0e730ce5456bd76df620b571bfbfc9586ff")
+	p2, _ := hex.DecodeString("348728c67f8827c5fac17c81c17cba245c957ee16d115def1802cb39d637fb682047b054f3eb4b169477d845b3b4d7c87fa36ec3e7e98d0c0361f1dc6767753ca9db7ed41c32a745d7930121feba01b9b9ad0a6774dc906e8775c3eedb26037e4c2ffceccc198df6f97f9c7f2d79b89baf85")
 
-	generatedKey := SeedToExtendedPrivate(seed)
+	generatedKey := SeedToExtendedPrivate(seed[:])
 	
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Extended private must be: %x\n But it is: %x", p2, generatedKey)
