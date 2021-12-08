@@ -1,12 +1,13 @@
 package mobile
 
 import (
+	"bytes"
 	"strconv"
 
 	"github.com/core-coin/ed448"
 )
 
-func Ed448GenerateKey(seed string, index string) (string, error) {
+func Ed448HDWalletsGenerateKey(seed string, index string) (string, error) {
 	sb, err := decodeBytes(seed)
 	if err != nil {
 		return "", err
@@ -21,9 +22,24 @@ func Ed448GenerateKey(seed string, index string) (string, error) {
 	k1 := ed448.ChildPrivateToPrivate(m, 0x80000000+44)
 	k2 := ed448.ChildPrivateToPrivate(k1, 0x80000000+654)
 	k3 := ed448.ChildPrivateToPrivate(k2, 0x80000000+0)
-	k4 := ed448.ChildPrivateToPrivate(k3, uint32(iu))
+	k4 := ed448.ChildPrivateToPrivate(k3, 0x80000000+0)
+	k5 := ed448.ChildPrivateToPrivate(k4, uint32(iu))
 
-	return encodeBytes(k4[57:]), nil
+	return encodeBytes(k5[57:]), nil
+}
+
+func Ed448GenerateKey(seed string) (string, error) {
+	sb, err := decodeBytes(seed)
+	if err != nil {
+		return "", err
+	}
+
+	privKey, err := ed448.Ed448GenerateKey(bytes.NewBuffer(sb))
+	if err != nil {
+		return "", err
+	}
+
+	return encodeBytes(privKey[:]), nil
 }
 
 func Ed448DerivePublicKey(privKey string) (string, error) {
