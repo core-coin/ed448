@@ -69,22 +69,25 @@ func Ed448Sign(privKey, message string) (string, error) {
 	return encodeBytes(sig[:]), nil
 }
 
-func Ed448Verify(pubKey, signature, message string) (bool, error) {
+func Ed448Verify(pubKey, signature, message string) (string, error) {
 	pb, err := decodeBytes(pubKey)
 	if err != nil {
-		return false, err
+		return "false", err
 	}
 	pub := ed448.BytesToPublicKey(pb)
 
 	sig, err := decodeBytes(signature)
 	if err != nil {
-		return false, err
+		return "false", err
 	}
 
 	msg, err := decodeBytes(message)
 	if err != nil {
-		return false, err
+		return "false", err
 	}
 
-	return ed448.Ed448Verify(pub, sig, msg), nil
+	if !ed448.Ed448Verify(pub, sig, msg) {
+		return "false", nil
+	}
+	return "true", nil
 }

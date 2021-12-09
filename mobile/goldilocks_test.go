@@ -146,25 +146,25 @@ func TestEd448Verify(t *testing.T) {
 		public    string
 		signature string
 		message   string
-		result    bool
+		result    string
 	}{
 		{
 			"0xdc752d354b44f2aef2e18056aaa9d8c58445972eccc6f9d2475713db3c5bd622cc8e80735f596afd41ad5d987886fd40ad2681be95dd438d00",
 			"0x8e6248c90a9b23fdbfaf57575cbabd45d10d8d362a04d59a3a47da9ddf97fe48c2d51911e7f33beacea00f58be4fada838f13193ae61ce08000c388cfc26bad73c7b71f5c26c67839e49b301ec4f7936d121a5968dc20d334006ee5e305ce30464809c05bd80053348b40b805a725ee72600",
 			"0x7f8b6b088b6d74c2852fc86c796dca07b44eed6fb3daf5e6b59f7c364db14528",
-			true,
+			"true",
 		},
 		{
 			"0x3b470fe5b42f7cdf4a534679c824ad1088d46daa2c5ba88925b259913fb301591073ab0f085c4b3d46334cf159578832a9bc0728dd592d4380",
 			"0xbfcb86fd1cb275c976633bf7ad1cabd88d453b782bcda4ea20280d895e82182a41f367b33cba19f69692055e4c3eb2cebd7818c4de233ad4004cb6e5dad9f90ac9be9ff31cbcc4c22e744ac82d472dbd8b14a9b1722e51b63229b40761fd4abb224ab691646e0458d29dd3bfcc03c0842100",
 			"0x7880aec93413f117ef14bd4e6d130875ab2c7d7d55a064fac3c2f7bd51516380",
-			true,
+			"true",
 		},
 		{
 			"0x328f102a67ea72ad65b7e6588fbc04f3be501e2c4146bef7d14ecc485f7a5e52703cc4f085e9b3209112f096f86e070003608698fbaa8ef700",
 			"0x2bd24f303b3b31a8e2c55de7b98455ecd4193354c1e98bbe7e5530dfc4faac4a95578ad16e6aee741a46665ea763474d2437299cf9841a548000413c4720c6137ba8585e43d34db3772b44f90ddf9d3dab6f575c667f27e5632d3755916a4a6873fc4fa338f54d9b4a3b673b1d33aca23600",
 			"0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb",
-			true,
+			"true",
 		},
 	}
 
@@ -175,7 +175,7 @@ func TestEd448Verify(t *testing.T) {
 				t.Fatal("returned error:", err)
 			}
 			if result != test.result {
-				t.Fatalf("returned result is %t but expected result is %t", result, test.result)
+				t.Fatalf("returned result is %s but expected result is %s", result, test.result)
 			}
 		})
 	}
