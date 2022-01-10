@@ -1,4 +1,4 @@
-package mobile
+package mobileed448
 
 import (
 	"encoding/hex"
