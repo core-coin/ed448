@@ -2,9 +2,10 @@ package ed448
 
 import (
 	"bytes"
-	"testing"
-	"encoding/hex"
 	crand "crypto/rand"
+	"encoding/hex"
+	"fmt"
+	"testing"
 )
 
 func TestSeedToExtendedPrivate(t *testing.T) {
@@ -13,11 +14,10 @@ func TestSeedToExtendedPrivate(t *testing.T) {
 	var seed [64]uint8
 	copy(seed[:], p1[:])
 
-
 	p2, _ := hex.DecodeString("348728c67f8827c5fac17c81c17cba245c957ee16d115def1802cb39d637fb682047b054f3eb4b169477d845b3b4d7c87fa36ec3e7e98d0c0361f1dc6767753ca9db7ed41c32a745d7930121feba01b9b9ad0a6774dc906e8775c3eedb26037e4c2ffceccc198df6f97f9c7f2d79b89baf85")
 
 	generatedKey := SeedToExtendedPrivate(seed[:])
-	
+
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Extended private must be: %x\n But it is: %x", p2, generatedKey)
 	}
@@ -30,11 +30,10 @@ func TestExtendedPrivateToPublic(t *testing.T) {
 	var seed [114]uint8
 	copy(seed[:], p1[:])
 
-
 	p2, _ := hex.DecodeString("004e843c2991930124e5a0711c6a8be763f5b605ee80f089dfa9cbec5ebb20123dcc787b162a7baf37b0251f6bdd4ac14ae111491ef391cf0db615e57dd4d15c3ed1323725c0ba8b1d7f6e740d08e0e29c6d3ff564c896c0c3dd28a9bb5065e06725c8f9e3f7c2c6bbad4900b7447ecf9880")
 
 	generatedKey := ExtendedPrivateToPublic(seed)
-	
+
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Extended private must be: %x\n But it is: %x", p2, generatedKey)
 	}
@@ -47,11 +46,10 @@ func TestChildPrivateToPrivate(t *testing.T) {
 	var e ExtendedPrivate
 	copy(e[:], p1[:])
 
-
 	p2, _ := hex.DecodeString("b8254111ddf243fd897b44878678ff15d16763c7939e86512fd2b6d6535fde62ec6c94dd61fc76033d94e001ea26ef3950a0edd2ef74713760e63a36576ee565e08646a99c2062ebdf773167dc533a0a3a1b0d929d8b77b5faf7d54d557f3b537eeb572b04b04d246fb63154381679a48e99")
 
 	generatedKey := ChildPrivateToPrivate(e, 0)
-	
+
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Child private must be: %x\n But it is: %x", p2, generatedKey)
 	}
@@ -62,7 +60,7 @@ func TestChildPrivateToPrivate(t *testing.T) {
 	p2, _ = hex.DecodeString("bd9c963ce9ac0fb9da7f9dfa0ea84251ed6f3eba924858bb7b2f9eb3a66aa4fb42a87a0d5b05c9a48c442b480477d17cd89b8679acd6ccdf02fca262c2f9a158d51bea28d0b2724f237560f65a3b8ae98215dc97ade43beb1e3dad4fc12ec8a81da661db0ab6b94f1c566e38f16e8daf93ba")
 
 	generatedKey = ChildPrivateToPrivate(e, 0x80000000)
-	
+
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Child private must be: %x\n But it is: %x", p2, generatedKey)
 	}
@@ -74,16 +72,14 @@ func TestChildPublicToPublic(t *testing.T) {
 	var e ExtendedPublic
 	copy(e[:], p1[:])
 
-
 	p2, _ := hex.DecodeString("0c051354b0efede7fa00124dd9e5a37bb7f0edf157b8139f64be5f6cac2c5edc7c60e1c4245136e9b9b8ea7f9ef5ab20032f6c6f2dba07d7f44a5aa538883ce7a9115337293eedb620ee031b71e994936557e58ef1dbafd1f91413c154b8713c43150a14e11c0ce0ba1d6d55bd26802d2080")
 
 	generatedKey := ChildPublicToPublic(e, 0)
-	
+
 	if bytes.Compare(p2[:], generatedKey[:]) != 0 {
 		t.Errorf("Child private must be: %x\n But it is: %x", p2, generatedKey)
 	}
 }
-
 
 func TestRandomCompare(t *testing.T) {
 
@@ -95,7 +91,7 @@ func TestRandomCompare(t *testing.T) {
 	pub2 := ExtendedPrivateToPublic(priv1)
 
 	if bytes.Compare(pub1[:], pub2[:]) != 0 {
-		t.Errorf("Child keys, generated from seed: \n%x\n are\n%x\nand\n%x\n", s,pub1,pub2)
+		t.Errorf("Child keys, generated from seed: \n%x\n are\n%x\nand\n%x\n", s, pub1, pub2)
 	}
 
 }
@@ -106,7 +102,6 @@ func TestAddTwoPublic(t *testing.T) {
 	var pub1 PublicKey
 	copy(pub1[:], p[:])
 
-
 	p, _ = hex.DecodeString("d666091b1b3836d082d349e66521878cf7afc734329d5d132d8ebd06bebf6514aaad5794dbafed3fd6aa1c5d59d5db914e8460041ff3db6280")
 	var pub2 PublicKey
 	copy(pub2[:], p[:])
@@ -116,8 +111,28 @@ func TestAddTwoPublic(t *testing.T) {
 	copy(pub[:], p[:])
 
 	generatedKey := addTwoPublic(pub1, pub2)
-	
+
 	if bytes.Compare(pub[:], generatedKey[:]) != 0 {
 		t.Errorf("Public key must be %x, but it is %x", generatedKey, pub)
 	}
+}
+
+func TestXprivFromSeed(t *testing.T) {
+	p1, _ := hex.DecodeString("6bc0169565eecbc8e62259959534a67684adbd4c229cc8830405fe81f60c7b896a273421c9587f4b3321ab8353bf7178b8f383ce07f916de7abebabfef0f5fee")
+	var seed [64]uint8
+	copy(seed[:], p1[:])
+
+	key, _ := SeedToXprvStruct(seed[:], 0)
+	keyString := key.B58Serialize()
+	xpriv := "xprv44jU3WStrxLpqn8mQDWHiT9iGByJrY7zYZ8PEgRjpofhwK84D8WE7hE1Zb749Sx3vSk2XZmN7fiuCsEi7pPoNNeo9itHnadAZ7nCQJYuhEHd5zAcPUvjoMsBGiaS1QDSUrSxHMzuwCS53Vy6gHQtBsDdfKWFRDXzNSTUFqie6fxACR"
+
+	if keyString != xpriv {
+		t.Errorf("xPriv must be %s, but it is %s", xpriv, keyString)
+	}
+}
+
+func TestXprivDecode(t *testing.T) {
+	xpriv := "xprv44jU3WStrxLpqn8mQDWHiT9iGByJrY7zYZ8PEgRjpofhwK84D8WE7hE1Zb749Sx3vSk2XZmN7fiuCsEi7pPoNNeo9itHnadAZ7nCQJYuhEHd5zAcPUvjoMsBGiaS1QDSUrSxHMzuwCS53Vy6gHQtBsDdfKWFRDXzNSTUFqie6fxACR"
+	key, err := B58Deserialize(xpriv)
+	fmt.Println(key, err)
 }

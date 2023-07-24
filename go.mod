@@ -3,6 +3,7 @@ module github.com/core-coin/ed448
 go 1.13
 
 require (
+	github.com/FactomProject/basen v0.0.0-20150613233007-fe3947df716e // indirect
 	github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
 	github.com/awnumar/memguard v0.21.0
 	github.com/kr/pretty v0.1.0 // indirect
