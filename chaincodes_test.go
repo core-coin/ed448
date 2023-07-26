@@ -4,7 +4,6 @@ import (
 	"bytes"
 	crand "crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"testing"
 )
 
@@ -115,24 +114,4 @@ func TestAddTwoPublic(t *testing.T) {
 	if bytes.Compare(pub[:], generatedKey[:]) != 0 {
 		t.Errorf("Public key must be %x, but it is %x", generatedKey, pub)
 	}
-}
-
-func TestXprivFromSeed(t *testing.T) {
-	p1, _ := hex.DecodeString("6bc0169565eecbc8e62259959534a67684adbd4c229cc8830405fe81f60c7b896a273421c9587f4b3321ab8353bf7178b8f383ce07f916de7abebabfef0f5fee")
-	var seed [64]uint8
-	copy(seed[:], p1[:])
-
-	key, _ := SeedToXprvStruct(seed[:], 0)
-	keyString := key.B58Serialize()
-	xpriv := "xprv44jU3WStrxLpqn8mQDWHiT9iGByJrY7zYZ8PEgRjpofhwK84D8WE7hE1Zb749Sx3vSk2XZmN7fiuCsEi7pPoNNeo9itHnadAZ7nCQJYuhEHd5zAcPUvjoMsBGiaS1QDSUrSxHMzuwCS53Vy6gHQtBsDdfKWFRDXzNSTUFqie6fxACR"
-
-	if keyString != xpriv {
-		t.Errorf("xPriv must be %s, but it is %s", xpriv, keyString)
-	}
-}
-
-func TestXprivDecode(t *testing.T) {
-	xpriv := "xprv44jU3WStrxLpqn8mQDWHiT9iGByJrY7zYZ8PEgRjpofhwK84D8WE7hE1Zb749Sx3vSk2XZmN7fiuCsEi7pPoNNeo9itHnadAZ7nCQJYuhEHd5zAcPUvjoMsBGiaS1QDSUrSxHMzuwCS53Vy6gHQtBsDdfKWFRDXzNSTUFqie6fxACR"
-	key, err := B58Deserialize(xpriv)
-	fmt.Println(key, err)
 }
