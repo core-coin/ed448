@@ -74,7 +74,9 @@ func DSAVerify(sig [114]byte, pub Point, msg []byte) bool {
 
 	// CHANGED! Eliminated multiplying and divining on scalarFour
 	rPoint := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
-	rPoint.EdDSADecodeWithoutCofactor(sig1)
+	if !rPoint.EdDSADecodeWithoutCofactor(sig1) {
+		return false
+	}
 
 	challenge := make([]byte, 114)
 	hashWithDom(challenge, append(append(sig1, pub.EdDSAEncode()...), msg...))

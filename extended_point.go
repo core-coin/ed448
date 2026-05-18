@@ -394,8 +394,8 @@ func edDSALikeDecode(p *twExtendedPoint, srcOrg []byte) word {
 	p.t.mulWSignedCurveConstant(p.x, edwardsD) // d * (y^2)
 	p.t.sub(bigOne, p.t)                       // denom = 1 - d * (y^2)
 	p.x.mul(p.z, p.t)
-	p.t.isr(p.x)      // 1/sqrt(num * denom) // implement it with check
-	p.x.mul(p.t, p.z) // sqrt(num / denom)
+	succ &= p.t.isr(p.x) // 1/sqrt(num * denom)
+	p.x.mul(p.t, p.z)    // sqrt(num / denom)
 	p.x.decafCondNegate(^lowBit(p.x) ^ low)
 	p.z = bigOne.copy()
 
@@ -457,8 +457,8 @@ func edDSALikeDecodeWithoutCofactor(p *twExtendedPoint, srcOrg []byte) word {
 	p.t.mulWSignedCurveConstant(p.x, edwardsD) // d * (y^2)
 	p.t.sub(bigOne, p.t)                       // denom = 1 - d * (y^2)
 	p.x.mul(p.z, p.t)
-	p.t.isr(p.x)      // 1/sqrt(num * denom) // implement it with check
-	p.x.mul(p.t, p.z) // sqrt(num / denom)
+	succ &= p.t.isr(p.x) // 1/sqrt(num * denom)
+	p.x.mul(p.t, p.z)    // sqrt(num / denom)
 	p.x.decafCondNegate(^lowBit(p.x) ^ low)
 	p.z = bigOne.copy()
 
@@ -572,7 +572,7 @@ func (p *twExtendedPoint) toAffine() *affineCoordinates {
 	return out
 }
 
-//TODO: extendedPoint should not know about twNiels
+// TODO: extendedPoint should not know about twNiels
 func (np *twNiels) toExtended() *twExtendedPoint {
 	p := &twExtendedPoint{
 		&bigNumber{},
@@ -909,7 +909,7 @@ func (p *twExtendedPoint) Double() Point {
 
 // Encode returns the encoding of a point (p) as a sequence of bytes.
 // This uses the 'decaf' technique. See `Decaf: Eliminating cofactors through
-// point compression``, Mike Hamburg, Advances in Cryptology (Crypto 2015).
+// point compression“, Mike Hamburg, Advances in Cryptology (Crypto 2015).
 // This technique removes the cofactor through quotients and isogenies.
 // The internal representation of points is as "even" elements of a twisted
 // Edwards curve with a=-1. Using this subgroup removes a factor of 2 from the
@@ -940,8 +940,8 @@ func (p *twExtendedPoint) Decode(src []byte, useIdentity bool) (bool, error) {
 }
 
 // EdDSAEncode returns the encoding of a point (p) as a sequence of bytes.
-// This uses the eddsa techinique. See ``Edwards-Curve Digital Signature
-// Algorithm (EdDSA)``, S. Josefsson and I. Liusvaara, Internet Research Task
+// This uses the eddsa techinique. See “Edwards-Curve Digital Signature
+// Algorithm (EdDSA)“, S. Josefsson and I. Liusvaara, Internet Research Task
 // Force (IRTF).
 // Multiplies the point to the cofactor first.
 func (p *twExtendedPoint) EdDSAEncode() []byte {
