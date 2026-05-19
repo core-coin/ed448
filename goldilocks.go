@@ -197,6 +197,9 @@ func Ed448Sign(privkey PrivateKey, message []byte) [114]byte {
 // VERIFY SIGNATURE
 
 func Ed448Verify(pubkey PublicKey, signature, message []byte) bool {
+	if isZeroPublicKey(pubkey) || isZeroBytes(signature) {
+		return false
+	}
 
 	p := NewPoint([16]uint32{}, [16]uint32{}, [16]uint32{}, [16]uint32{})
 
@@ -207,6 +210,24 @@ func Ed448Verify(pubkey PublicKey, signature, message []byte) bool {
 	copy(sig[:], signature[:])
 
 	return DSAVerify(sig, p, message)
+}
+
+func isZeroPublicKey(pubkey PublicKey) bool {
+	for _, b := range pubkey {
+		if b != 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func isZeroBytes(buf []byte) bool {
+	for _, b := range buf {
+		if b != 0 {
+			return false
+		}
+	}
+	return true
 }
 
 // GENERATE PRIVATE KEY
